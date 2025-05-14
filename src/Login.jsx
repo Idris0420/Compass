@@ -5,7 +5,7 @@ import GoogleIcon from './assets/SocialLogos/Google.png';
 function Login(){
     
     return(
-        <div className='min-w-full min-h-screen bg-cover  bg-[url("./assets/LoginBg.png")] bg-no-repeat flex justify-end '>
+        <div className='min-w-full min-h-screen bg-cover  bg-[url("./assets/LoginBg.png")] bg-no-repeat flex justify-center md:justify-end '>
             <div className='h-screen w-[45%] pt-[2%] flex-col items-center justify-center'>
                 <h1 className='font-agdasima font-black text-[70px] italic text-[#FFCC66] text-light-shadow text-center'>COMPASS</h1>
                 <h1 className='font-agdasima font-medium text-white text-[40px] pt-[1%] text-light-shadow text-center'>Login</h1>
@@ -19,15 +19,7 @@ function Login(){
                         <input type="text" className='w-full h-[40px] bg-white border border-[#7E7E7E] border-1 px-2 focus:border-[#FFCC66] focus:ring-1 focus:ring-[#FFCC66] outline-none shadow-lg' />
                     </div>
                     <button className='font-outfit mt-[5%] bg-[#FFCC66] px-[50px] py-[10px] mx-auto font-bold shadow-lg hover:bg-white transition-colors duration-300 mb-[2%]'>Login</button>
-                    <div className='flex-1 w-[full] border-t border-white border-t-[4px] pt-[4%]'>
-                        <h1 className='text-white font-agdasima text-3xl font-bold text-center'>OR</h1>
-                        <div className='w-[100%] flex flex-row justify-between mt-[4%]'>
-                            <button className='bg-[#FFCC66] w-[150px]  flex flex-row items-center justify-center gap-2 font-outfit font-medium text-black text-[20px] hover:bg-white transition-colors duration-300 shadow-lg'> <img className='h-[40px] w-[40px] aspect-square' src={GoogleIcon} alt="" />Google</button>
-                            <button className='bg-[#FFCC66] w-[150px]  flex flex-row items-center justify-center font-outfit font-medium text-black text-[20px] hover:bg-white transition-colors duration-300 shadow-lg'> <img className='h-[40px] w-[50px] aspect-square' src={FacebookIcon} alt="" />Facebook</button>
-                            <button className='bg-[#FFCC66] w-[150px]  flex flex-row items-center justify-center font-outfit font-medium text-black text-[20px] hover:bg-white transition-colors duration-300 shadow-lg'> <img className='h-[50px] w-[70px] aspect-square' src={YahooIcon} alt="" />Yahoo</button>
-                        </div>
-                        <h1 className='font-outfit text-white text-center mt-[10%] text-xl'>Don't have an account? <a href="" className='text-[#FFCC66] underline hover:text-white'>Sign up</a></h1>
-                    </div>
+                    <h1 className='font-outfit text-white text-center mt-[10%] text-medium md:text-xl'>Don't have an account? <a href="" className='text-[#FFCC66] underline hover:text-white'>Sign up</a></h1>
                 </div>
             </div>
         </div>
