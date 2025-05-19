@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom"; // Added useNavigate
 import Cross from "./assets/Cross.png";
 import Check from "./assets/Check.png";
 
@@ -17,6 +17,8 @@ function ForgotPass() {
   const [has_lowercase, setHasLowercase] = useState(null);
   const [has_number, setHasNumber] = useState(null);
   const [has_special_char, setHasSpecialChar] = useState(null);
+
+  const navigate = useNavigate(); // Added for navigation
 
   const verifyPassword = (pwd) => {
     if (typeof pwd !== "string") pwd = "";
@@ -61,10 +63,9 @@ function ForgotPass() {
   const handleChangePassword = async () => {
     setResetClicked(true);
     verifyPassword(newPassword);
-  
-    // Delay to let error state update
+
     await new Promise((resolve) => setTimeout(resolve, 100));
-  
+
     if (
       has_min_length &&
       has_uppercase &&
@@ -78,22 +79,28 @@ function ForgotPass() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email, new_password: newPassword }),
         });
-      
-        const text = await res.text(); // get raw response
+
+        const text = await res.text();
         console.log("Raw response:", text);
-      
-        const data = JSON.parse(text); // try parsing it to JSON
+
+        const data = JSON.parse(text);
         console.log("Parsed response:", data);
-      
-        // ... handle success logic here
+
+        if (data.success) {
+          alert("Changed Successfully"); // Show success message
+          // Redirect to login page after 2 seconds
+          setTimeout(() => {
+            navigate("/"); // Redirect to login page
+          }, 2000);
+        } else {
+          alert(data.error || "Failed to update password.");
+        }
       } catch (err) {
         console.error("Caught error:", err);
-        alert("An error occurred while changing the password.");
+        alert("An error occurred while changing the password: " + err.message);
       }
-      
     }
   };
-  
 
   useEffect(() => {
     if (reset_clicked) {
