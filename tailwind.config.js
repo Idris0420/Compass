@@ -7,6 +7,8 @@ module.exports = {
       fontFamily: {
         agdasima: ['Agdasima', 'sans-serif'],
         outfit: ['Outfit', 'sans-serif'],
+        afacad: ['Afacad', 'sans-serif'],
+        brans: ['Brans', 'sans-serif'],
       },
     },
   },
