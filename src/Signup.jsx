@@ -4,6 +4,8 @@ import Cross from './assets/Cross.png'
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
+import Show from './assets/Eye/Show.png';
+import Hide from './assets/Eye/Hide.png';
 
 function Singnup() {
 
@@ -16,6 +18,8 @@ function Singnup() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirm_password, setConfirmPassword] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
 
 
@@ -141,21 +145,83 @@ function Singnup() {
                         <input type="text" onChange={e => setEmail(e.target.value)} className='w-full h-[40px] bg-white border border-gray-500 border-1 px-2 focus:border-[#FFCC66] focus:ring-1 focus:ring-[#FFCC66] outline-none shadow-lg' />
                     </div>
                     <div>
-                        <h1 className='font-agdasima text-2xl text-white font-medium'>Password</h1>
-                        <input type="text" onChange={(e) => {setPassword(e.target.value); verifyPassword(e.target.value); }} className='w-full h-[40px] bg-white border border-[#7E7E7E] border-1 px-2 focus:border-[#FFCC66] focus:ring-1 focus:ring-[#FFCC66] outline-none shadow-lg' />
-                    </div>
-                    <div>
-                        <h1 className='font-agdasima text-2xl text-white font-medium'>Confirm Password</h1>
-                        <input type="text" onChange={e => setConfirmPassword(e.target.value)} className='w-full h-[40px] bg-white border border-[#7E7E7E] border-1 px-2 focus:border-[#FFCC66] focus:ring-1 focus:ring-[#FFCC66] outline-none shadow-lg' />
-                        <h1 className="font-outfit text-2xl text-white text-sm">Password must contain:</h1>
-                        <ul className='list-disc list-none text'>
-                            <li className={`font-outfit text-sm flex items-center gap-1 ${signup_clicked ? (has_min_length ? "text-green-400" : "text-red-400") : "text-white"}`}> <img src={signup_clicked ? (has_min_length ? Check : Cross) : null} className={`w-[20px] ${!signup_clicked ? 'invisible' : ''}`} alt="" />At least 8 characters</li>
-                            <li className={`font-outfit text-sm flex items-center gap-1 ${signup_clicked ? (has_uppercase ? "text-green-400" : "text-red-400") : "text-white"}`}> <img src={has_uppercase ? Check:Cross} className={`w-[20px] ${!signup_clicked ? 'invisible' : ''}`} alt="" />At least one uppercase letter</li>
-                            <li className={`font-outfit text-sm flex items-center gap-1 ${signup_clicked ? (has_lowercase ? "text-green-400" : "text-red-400") : "text-white"}`}> <img src={has_lowercase ? Check:Cross} className={`w-[20px] ${!signup_clicked ? 'invisible' : ''}`} alt="" />At least one lowercase letter</li>
-                            <li className={`font-outfit text-sm flex items-center gap-1 ${signup_clicked ? (has_number ? "text-green-400" : "text-red-400") : "text-white"}`}> <img src={has_number ? Check:Cross} className={`w-[20px] ${!signup_clicked ? 'invisible' : ''}`} alt="" />At least one number</li>
-                            <li className={`font-outfit text-sm flex items-center gap-1 ${signup_clicked ? (has_special_char ? "text-green-400" : "text-red-400") : "text-white"}`}> <img src={has_special_char ? Check:Cross} className={`w-[20px] ${!signup_clicked ? 'invisible' : ''}`} alt="" />At least one special character</li>
-                        </ul>
-                    </div>
+        <h1 className="font-agdasima text-2xl text-white font-medium">Password</h1>
+        <div className="relative w-full">
+          <input
+            type={showPassword ? 'text' : 'password'}
+            onChange={(e) => {
+              setPassword(e.target.value);
+              verifyPassword(e.target.value);
+            }}
+            className="w-full h-[40px] bg-white border border-[#7E7E7E] border-1 px-2 pr-10 focus:border-[#FFCC66] focus:ring-1 focus:ring-[#FFCC66] outline-none shadow-lg"
+          />
+          <img
+            src={showPassword ? Hide : Show}
+            alt="Toggle password visibility"
+            className="absolute top-1/2 right-3 transform -translate-y-1/2 h-5 w-5 cursor-pointer"
+            onClick={() => setShowPassword(!showPassword)}
+          />
+        </div>
+      </div>
+      <div>
+        <h1 className="font-agdasima text-2xl text-white font-medium">Confirm Password</h1>
+        <div className="relative w-full">
+          <input
+            type={showConfirmPassword ? 'text' : 'password'}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            className="w-full h-[40px] bg-white border border-[#7E7E7E] border-1 px-2 pr-10 focus:border-[#FFCC66] focus:ring-1 focus:ring-[#FFCC66] outline-none shadow-lg"
+          />
+          <img
+            src={showConfirmPassword ? Hide : Show}
+            alt="Toggle confirm password visibility"
+            className="absolute top-1/2 right-3 transform -translate-y-1/2 h-5 w-5 cursor-pointer"
+            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+          />
+        </div>
+        <h1 className="font-outfit text-2xl text-white text-sm">Password must contain:</h1>
+        <ul className="list-disc list-none text">
+          <li className={`font-outfit text-sm flex items-center gap-1 ${signup_clicked ? (has_min_length ? 'text-green-400' : 'text-red-400') : 'text-white'}`}>
+            <img
+              src={signup_clicked ? (has_min_length ? Check : Cross) : null}
+              className={`w-[20px] ${!signup_clicked ? 'invisible' : ''}`}
+              alt=""
+            />
+            At least 8 characters
+          </li>
+          <li className={`font-outfit text-sm flex items-center gap-1 ${signup_clicked ? (has_uppercase ? 'text-green-400' : 'text-red-400') : 'text-white'}`}>
+            <img
+              src={has_uppercase ? Check : Cross}
+              className={`w-[20px] ${!signup_clicked ? 'invisible' : ''}`}
+              alt=""
+            />
+            At least one uppercase letter
+          </li>
+          <li className={`font-outfit text-sm flex items-center gap-1 ${signup_clicked ? (has_lowercase ? 'text-green-400' : 'text-red-400') : 'text-white'}`}>
+            <img
+              src={has_lowercase ? Check : Cross}
+              className={`w-[20px] ${!signup_clicked ? 'invisible' : ''}`}
+              alt=""
+            />
+            At least one lowercase letter
+          </li>
+          <li className={`font-outfit text-sm flex items-center gap-1 ${signup_clicked ? (has_number ? 'text-green-400' : 'text-red-400') : 'text-white'}`}>
+            <img
+              src={has_number ? Check : Cross}
+              className={`w-[20px] ${!signup_clicked ? 'invisible' : ''}`}
+              alt=""
+            />
+            At least one number
+          </li>
+          <li className={`font-outfit text-sm flex items-center gap-1 ${signup_clicked ? (has_special_char ? 'text-green-400' : 'text-red-400') : 'text-white'}`}>
+            <img
+              src={has_special_char ? Check : Cross}
+              className={`w-[20px] ${!signup_clicked ? 'invisible' : ''}`}
+              alt=""
+            />
+            At least one special character
+          </li>
+        </ul>
+      </div>
                     <p className="font-outfit text-lg text-white text-center">By signing up you agree to our{" "}<a href="/terms" target="_blank" rel="noopener noreferrer" className="text-[#FFCC66] underline hover:text-white" > Terms of Service </a>{" "} and{" "} <a href="/privacy" target="_blank" rel="noopener noreferrer" className="text-[#FFCC66] underline hover:text-white"> Privacy Policy</a>.</p>
                     <button className='font-outfit bg-[#FFCC66] px-[50px] py-[10px] mx-auto font-bold shadow-lg hover:bg-white transition-colors duration-300' onClick={verifyForm}>Sign In</button>
                 
