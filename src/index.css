@@ -5,3 +5,9 @@
 .text-light-shadow {
   text-shadow: 3px 4px 7px rgba(0, 0, 0, 0.405);
 }
+
+.text-vlight-shadow {
+  text-shadow: 3px 4px 5px rgba(0, 0, 0, 0.312);
+}
+
+
