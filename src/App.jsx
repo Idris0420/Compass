@@ -7,6 +7,7 @@ import HomePage from './HomePage';
 import TermsOfService from './TermsOfService';
 import ForgotPass from './ForgotPass';
 import Privacy from './Privacy';
+import TripPlanner from './TripPlanner';
 
 function App() {
   
@@ -34,6 +35,10 @@ function App() {
     {
       path: "/privacy",
       element: <Privacy/>
+    },
+    {
+      path: "/trip-planner",
+      element: <TripPlanner/>
     }
 
 

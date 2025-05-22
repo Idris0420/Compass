@@ -1,14 +1,15 @@
-import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom"; // Added useNavigate
+import { useState, useEffect, useRef } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import Cross from "./assets/Cross.png";
 import Check from "./assets/Check.png";
 
 function ForgotPass() {
   const [email, setEmail] = useState("");
   const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [securityQuestion, setSecurityQuestion] = useState("");
-  const [securityAnswer, setSecurityAnswer] = useState(""); // expected answer from DB
-  const [securityAnswerInput, setSecurityAnswerInput] = useState(""); // user's input
+  const [securityAnswer, setSecurityAnswer] = useState("");
+  const [securityAnswerInput, setSecurityAnswerInput] = useState("");
   const [step, setStep] = useState(1);
 
   const [reset_clicked, setResetClicked] = useState(false);
@@ -18,7 +19,12 @@ function ForgotPass() {
   const [has_number, setHasNumber] = useState(null);
   const [has_special_char, setHasSpecialChar] = useState(null);
 
-  const navigate = useNavigate(); // Added for navigation
+  const navigate = useNavigate();
+
+  const emailInputRef = useRef(null);
+  const securityAnswerInputRef = useRef(null);
+  const passwordInputRef = useRef(null);
+  const confirmPasswordInputRef = useRef(null);
 
   const verifyPassword = (pwd) => {
     if (typeof pwd !== "string") pwd = "";
@@ -66,6 +72,11 @@ function ForgotPass() {
 
     await new Promise((resolve) => setTimeout(resolve, 100));
 
+    if (newPassword !== confirmPassword) {
+      alert("Passwords do not match.");
+      return;
+    }
+
     if (
       has_min_length &&
       has_uppercase &&
@@ -74,7 +85,7 @@ function ForgotPass() {
       has_special_char
     ) {
       try {
-        const res = await fetch("http://localhost/my-app-api/check_old_password.php", {
+        const res = await fetch("http://localhost/my-app-api/change_password.php", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email, new_password: newPassword }),
@@ -87,10 +98,9 @@ function ForgotPass() {
         console.log("Parsed response:", data);
 
         if (data.success) {
-          alert("Changed Successfully"); // Show success message
-          // Redirect to login page after 2 seconds
+          alert("Changed Successfully");
           setTimeout(() => {
-            navigate("/"); // Redirect to login page
+            navigate("/");
           }, 2000);
         } else {
           alert(data.error || "Failed to update password.");
@@ -101,6 +111,32 @@ function ForgotPass() {
       }
     }
   };
+
+  // NEW: Updated handleKeyDown to handle actions on Enter without immediate focus
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      if (step === 1) {
+        handleCheckEmail();
+      } else if (step === 2) {
+        handleVerifyAnswer();
+      } else if (step === 3) {
+        if (document.activeElement === passwordInputRef.current) {
+          confirmPasswordInputRef.current?.focus();
+        } else {
+          handleChangePassword();
+        }
+      }
+    }
+  };
+
+  // NEW: Added useEffect to focus the next input after step changes
+  useEffect(() => {
+    if (step === 2) {
+      securityAnswerInputRef.current?.focus();
+    } else if (step === 3) {
+      passwordInputRef.current?.focus();
+    }
+  }, [step]);
 
   useEffect(() => {
     if (reset_clicked) {
@@ -120,7 +156,9 @@ function ForgotPass() {
             <h1 className="font-agdasima text-2xl text-white font-medium">Email</h1>
             <div className="flex">
               <input
+                ref={emailInputRef}
                 onChange={(e) => setEmail(e.target.value)}
+                onKeyDown={handleKeyDown}
                 type="email"
                 className="w-[70%] h-[40px] bg-white border border-gray-500 px-2 focus:border-[#FFCC66] focus:ring-1 focus:ring-[#FFCC66] outline-none shadow-lg"
               />
@@ -140,7 +178,9 @@ function ForgotPass() {
             </h1>
             <div className="flex">
               <input
+                ref={securityAnswerInputRef}
                 onChange={(e) => setSecurityAnswerInput(e.target.value)}
+                onKeyDown={handleKeyDown}
                 type="text"
                 className={`w-[70%] h-[40px] bg-white border border-gray-500 px-2 focus:border-[#FFCC66] focus:ring-1 focus:ring-[#FFCC66] outline-none shadow-lg ${step <= 1 ? "invisible" : "block"}`}
               />
@@ -157,8 +197,10 @@ function ForgotPass() {
           <div>
             <h1 className={`font-agdasima text-2xl text-white font-medium ${step <= 2 ? "invisible" : "block"}`}>Password</h1>
             <input
+              ref={passwordInputRef}
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
+              onKeyDown={handleKeyDown}
               type="password"
               className={`w-full h-[40px] bg-white border border-gray-500 px-2 focus:border-[#FFCC66] focus:ring-1 focus:ring-[#FFCC66] outline-none shadow-lg ${step <= 2 ? "invisible" : "block"}`}
             />
@@ -166,7 +208,10 @@ function ForgotPass() {
           <div>
             <h1 className={`font-agdasima text-2xl text-white font-medium ${step <= 2 ? "invisible" : "block"}`}>Confirm Password</h1>
             <input
-              onChange={(e) => setNewPassword(e.target.value)}
+              ref={confirmPasswordInputRef}
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              onKeyDown={handleKeyDown}
               type="password"
               className={`w-full h-[40px] bg-white border border-gray-500 px-2 focus:border-[#FFCC66] focus:ring-1 focus:ring-[#FFCC66] outline-none shadow-lg ${step <= 2 ? "invisible" : "block"}`}
             />
