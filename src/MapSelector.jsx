@@ -1,27 +1,41 @@
-// components/MapSelector.jsx
-import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
-import { useState } from 'react';
+import { MapContainer, TileLayer, Marker, useMap, useMapEvents } from 'react-leaflet';
+import { useEffect } from 'react';
 import L from 'leaflet';
 
-function LocationMarker({ setPosition }) {
-  useMapEvents({
-    click(e) {
-      setPosition(e.latlng);
-    },
-  });
+// Fix for default marker icon
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+  iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+  shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+});
 
-  return null;
+function LocationMarker({ position }) {
+  const map = useMap();
+
+  useEffect(() => {
+    if (position) {
+      map.setView([position.lat, position.lng], 13); // Zooms to new location
+    }
+  }, [position, map]);
+
+  return position ? <Marker position={[position.lat, position.lng]} /> : null;
 }
 
 export default function MapSelector({ position, setPosition }) {
   return (
-    <MapContainer center={[14.5995, 120.9842]} zoom={5} scrollWheelZoom={false} className="w-full h-full rounded-md">
+    <MapContainer
+      center={[0, 0]} // Center on the world
+      zoom={2} // Zoom level to show the entire world
+      scrollWheelZoom={true}
+      className="w-full h-full rounded-md"
+      style={{ zIndex: 0 }}
+    >
       <TileLayer
-        attribution='&copy; OpenStreetMap contributors'
+        attribution='© OpenStreetMap contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-      {position && <Marker position={position} />}
-      <LocationMarker setPosition={setPosition} />
+      <LocationMarker position={position} />
     </MapContainer>
   );
 }

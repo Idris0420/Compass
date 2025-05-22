@@ -9,6 +9,8 @@ import Third from "./assets/LearnMoreAboutImg/Third.png";
 import Featured from "./assets/LearnMoreAboutImg/Featured.png";
 import Sign from "./assets/LearnMoreAboutImg/Sign.png";
 
+import { Link } from "react-router-dom";
+
 function HomePage(){
     return (   
         <>
@@ -22,12 +24,18 @@ function HomePage(){
                                     Compass
                                 </h1>
                                 </div> 
-                                <div className="font-md flex w-[40%] h-full justify-between items-center font-brans text-white text-xl">
-                                    <h1>Trip Planner</h1>
-                                    <h1>Destinations</h1>
-                                    <h1>Travel Logs</h1>
-                                    <img className="h-[70%]" src={Profile} alt="" />
-                                </div>    
+                                <div className="flex w-[40%] h-full justify-between items-center font-brands text-white text-xl">
+                                    <Link to="/trip-planner" className="cursor-pointer hover:scale-125 transition-transform duration-300">
+                                        Trip Planner
+                                    </Link>
+                                    <h1 className="cursor-pointer hover:scale-125 transition-transform duration-300">
+                                        Destinations
+                                    </h1>
+                                    <h1 className="cursor-pointer hover:scale-125 transition-transform duration-300">
+                                        Travel Logs
+                                    </h1>
+                                    <img className="h-[70%] transition-transform duration-300 hover:scale-110" src={Profile} alt="Profile" />
+                                </div>
                         </div>                           
                     </div>
                     <div className="pt-[80px] flex flex-row items-center justify-center">

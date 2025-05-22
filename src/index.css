@@ -12,3 +12,30 @@
 }
 
 
+/* index.css or styles.css */
+.leaflet-container {
+  z-index: 0 !important;
+}
+
+.leaflet-pane,
+.leaflet-tile,
+.leaflet-marker-pane,
+.leaflet-shadow-pane,
+.leaflet-overlay-pane,
+.leaflet-map-pane,
+.leaflet-control-container {
+  z-index: 0 !important;
+}
+
+@layer components {
+  .leaflet-container,
+  .leaflet-pane,
+  .leaflet-tile,
+  .leaflet-marker-pane,
+  .leaflet-shadow-pane,
+  .leaflet-overlay-pane,
+  .leaflet-map-pane,
+  .leaflet-control-container {
+    z-index: 0 !important;
+  }
+}

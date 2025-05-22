@@ -1,5 +1,5 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-
+import 'leaflet/dist/leaflet.css';
 import './index.css';
 import Login from './Login';
 import Singnup from './Signup';
