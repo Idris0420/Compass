@@ -13,11 +13,11 @@ function Profile(){
                         <img className="rounded-full h-full border-[5px] border-[#006699]" src={SampleProfile} alt="" />
                         <div className=" flex flex-col justify-center">
                             <div className="">
-                                <h1 className="text-[#006699] text-[32px]">Name</h1>
+                                <h1 className="text-[#006699] text-[32px] font-bold">Name</h1>
                                 <h2 className="text-[24px]">"name"</h2>
                             </div>
                             <div className="">
-                                <h1 className="text-[#006699] text-[32px]">Email Address</h1>
+                                <h1 className="text-[#006699] text-[32px] font-bold">Email Address</h1>
                                 <h2 className="text-[24px]">"email"</h2>
                             </div>
                         </div>
