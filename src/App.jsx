@@ -9,6 +9,7 @@ import ForgotPass from './ForgotPass';
 import Privacy from './Privacy';
 import TripPlanner from './TripPlanner';
 import Profile from './Profile';
+import TravelLogs from './TravelLogs';
 
 function App() {
   
@@ -44,6 +45,10 @@ function App() {
     {
       path: "/profile",
       element: <Profile />
+    },
+    {
+      path: "/travel-logs",
+      element: <TravelLogs />
     }
 
 

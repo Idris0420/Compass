@@ -5,6 +5,7 @@ import Logo from './assets/Logo.png';
 import Profile from './assets/Profile.png';
 import Steps from './assets/TripPlannerImg/Steps.png';
 import BGCompass from './assets/TripPlannerImg/BGCompass.png';
+import { Link } from 'react-router-dom';
 
 function TripPlanner() {
   const [position, setPosition] = useState(null);
@@ -140,9 +141,9 @@ function TripPlanner() {
             </h1>
           </div>
           <div className="font-md flex w-[40%] h-full justify-between items-center font-brans text-white text-xl">
-            <h1>Trip Planner</h1>
+            <Link to="/trip-planner" >Trip Planner</Link>
             <h1>Destinations</h1>
-            <h1>Travel Logs</h1>
+            <Link to="/profile">Travel Logs</Link>
             {!isLoggedIn && (
               <a href="/login" className="text-white">
                 Login
