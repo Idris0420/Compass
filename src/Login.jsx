@@ -41,11 +41,7 @@ function Login() {
         }
     };
 
-    // Logout function to remove cookie and navigate to login
-    const handleLogout = () => {
-        Cookies.remove("userEmail"); // Remove the cookie
-        navigate("/"); // Navigate back to login page
-    };
+    
 
     return (
         <div className='min-w-full min-h-screen bg-cover bg-[url("./assets/LoginBg.png")] bg-no-repeat flex justify-center md:justify-end'>

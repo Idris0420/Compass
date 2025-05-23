@@ -1,8 +1,21 @@
 import Nav from "./Nav";
 import SampleProfile from "./assets/SampleProfile.jpg";
+import { useNavigate } from "react-router-dom";
+import Cookies from "js-cookie"; // Import js-cookie
+
 function Profile(){
+
+    const navigate = useNavigate();
+    // Logout function to remove cookie and navigate to login
+
+    const handleLogout = () => {
+        Cookies.remove("userEmail"); // Remove the cookie
+        navigate("/"); // Navigate back to login page
+    };
+
     return(
         <>
+        
             <div className="w-full min-h-screen ">
                 <Nav/>
                 <div className="pt-[90px] flex flex-col px-[5%] ">
@@ -19,6 +32,9 @@ function Profile(){
                             <div className="">
                                 <h1 className="text-[#006699] text-[32px] font-bold">Email Address</h1>
                                 <h2 className="text-[24px]">"email"</h2>
+                            </div>
+                            <div>
+                                <button onClick={handleLogout} className="px-3 py-1 rounded hover:scale-125 transition-transform duration-300 text-white bg-red-500">Log Out</button>
                             </div>
                         </div>
                     </div>
