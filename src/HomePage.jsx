@@ -1,7 +1,5 @@
-import Logo from "./assets/logo.png";
 import HomeCompass from "./assets/HomeCompass.png";
 import ArrowHead from "./assets/ArrowHead.png";
-import Profile from "./assets/Profile.png";
 import Separator from "./assets/Separator.png";
 import First from "./assets/LearnMoreAboutImg/First.png";
 import Second from "./assets/LearnMoreAboutImg/Second.png";
@@ -9,35 +7,16 @@ import Third from "./assets/LearnMoreAboutImg/Third.png";
 import Featured from "./assets/LearnMoreAboutImg/Featured.png";
 import Sign from "./assets/LearnMoreAboutImg/Sign.png";
 
-import { Link } from "react-router-dom";
+import Nav from "./Nav";
+
+
 
 function HomePage(){
     return (   
         <>
             <div className=".text-light-shadow w-full min-h-screen " style={{
                 background: 'linear-gradient(to bottom, rgba(0, 102, 153, 0.4) 0%, rgba(0, 85, 128, 1) 50%, rgba(0, 68, 102, 0.56) 100%)'}}>
-                <div className="h-[60px] w-full bg-[#006699] fixed">
-                    <div className="h-full flex items-center px-6 sm:px-5 md:px-10  justify-between">
-                            <div className="flex items-center h-full">
-                                <img src={Logo} className="h-[80%]" alt="" />
-                                <h1 style={{ fontFamily: 'Brans' }} className="text-3xl ml-2 text-white">
-                                    Compass
-                                </h1>
-                                </div> 
-                                <div className="flex w-[40%] h-full justify-between items-center font-brands text-white text-xl">
-                                    <Link to="/trip-planner" className="cursor-pointer hover:scale-125 transition-transform duration-300">
-                                        Trip Planner
-                                    </Link>
-                                    <h1 className="cursor-pointer hover:scale-125 transition-transform duration-300">
-                                        Destinations
-                                    </h1>
-                                    <h1 className="cursor-pointer hover:scale-125 transition-transform duration-300">
-                                        Travel Logs
-                                    </h1>
-                                    <img className="h-[70%] transition-transform duration-300 hover:scale-110" src={Profile} alt="Profile" />
-                                </div>
-                        </div>                           
-                    </div>
+                    <Nav />
                     <div className="pt-[80px] flex flex-row items-center justify-center">
                         <div className="w-[50%] text-center px-40 flex flex-col items-start">
                             <h1 className="font-outfit text-5xl text-white font-medium">Welcome to</h1>

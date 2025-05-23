@@ -8,6 +8,7 @@ import TermsOfService from './TermsOfService';
 import ForgotPass from './ForgotPass';
 import Privacy from './Privacy';
 import TripPlanner from './TripPlanner';
+import Profile from './Profile';
 
 function App() {
   
@@ -39,6 +40,10 @@ function App() {
     {
       path: "/trip-planner",
       element: <TripPlanner/>
+    },
+    {
+      path: "/profile",
+      element: <Profile />
     }
 
 

@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { useState } from "react";
+import Cookies from "js-cookie"; // Import js-cookie
 import Show from './assets/Eye/Show.png';
 import Hide from './assets/Eye/Hide.png';
 
@@ -27,6 +28,8 @@ function Login() {
             console.log("Parsed response:", data);
 
             if (data.success) {
+                // Set cookie with email upon successful login
+                Cookies.set("userEmail", email, { expires: 7 }); // Expires in 7 days
                 setErrorMessage("");
                 navigate("/home");
             } else {
@@ -36,6 +39,12 @@ function Login() {
             console.error("Login error:", error);
             setErrorMessage("Something went wrong. Check the console for more info.");
         }
+    };
+
+    // Logout function to remove cookie and navigate to login
+    const handleLogout = () => {
+        Cookies.remove("userEmail"); // Remove the cookie
+        navigate("/"); // Navigate back to login page
     };
 
     return (
