@@ -3,6 +3,8 @@ import SampleProfile from "./assets/SampleProfile.jpg";
 import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie"; // Import js-cookie
 import { useState, useEffect } from 'react';
+import profile from "./assets/Profile.png";
+import ProfileEdit from "./assets/ProfileEdit.png";
 
 function Profile() {
     const navigate = useNavigate();
@@ -79,7 +81,18 @@ function Profile() {
                         <h1 className="font-outfit text-5xl font-bold text-[#006699]">Profile</h1>
                     </div>
                     <div className="flex flex-row h-[270px] w-full gap-10 font-outfit mt-[40px]">
-                        <img className="rounded-full h-full border-[5px] border-[#006699]" src={SampleProfile} alt="" />
+                    <div className="relative inline-block h-[270px] w-[270px]">
+                        <img
+                            className="rounded-full h-full w-full border-[5px] border-[#006699] object-cover cursor-pointer"
+                            src={profile}
+                            alt="Profile"
+                        />
+                        <img
+                            className="absolute top-8 right-2 w-8 h-8 rounded-full bg-white p-1"
+                            src={ProfileEdit}
+                            alt="Edit Profile"
+                        />
+                        </div>
                         <div className="flex flex-col justify-center">
                             <div>
                                 <h1 className="text-[#006699] text-[32px] font-bold">Name</h1>
