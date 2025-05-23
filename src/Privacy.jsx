@@ -3,9 +3,9 @@ import Logo from "./assets/logo.png";
 function Privacy() {
     return (
         <>
-            <div className="w-full h-[10000px] overflow-x-hidden">
+            <div className="w-full overflow-x-hidden mb-[100px]">
                 {/* Navigation */}
-                <div className="w-full h-[55px] bg-[#006699]">
+                <div className="w-full h-[55px] bg-[#006699] fixed top-0 z-100">
                     <div className="h-full flex items-center px-6 sm:px-5 md:px-10">
                         <img src={Logo} className="h-[80%]" alt="" />
                         <h1 style={{ fontFamily: 'Brans' }} className="text-3xl ml-2 text-white">
@@ -15,7 +15,7 @@ function Privacy() {
                 </div>
 
                 {/* Content */}
-                <div className="w-full flex flex-col items-center px-3 sm:px-5 md:px-10">
+                <div className="mt-[55px] w-full flex flex-col items-center px-3 sm:px-5 md:px-10">
                     <div className="w-full">
                         <h1 className="font-afacad text-[50px] mt-[20px] px-10">PRIVACY POLICY</h1>
                     </div>
@@ -93,6 +93,9 @@ function Privacy() {
                         </p>
                     </div>
                 </div>
+            </div>
+            <div className="h-[40px] w-full bg-[#FFCC66] font-outfit font-bold flex items-center justify-end px-[50px]">
+                © 2025 ITP222L Group 9 All Rights Reserved.
             </div>
         </>
     );

@@ -1,5 +1,5 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-
+import 'leaflet/dist/leaflet.css';
 import './index.css';
 import Login from './Login';
 import Singnup from './Signup';
@@ -7,6 +7,8 @@ import HomePage from './HomePage';
 import TermsOfService from './TermsOfService';
 import ForgotPass from './ForgotPass';
 import Privacy from './Privacy';
+import TripPlanner from './TripPlanner';
+import Profile from './Profile';
 
 function App() {
   
@@ -34,6 +36,14 @@ function App() {
     {
       path: "/privacy",
       element: <Privacy/>
+    },
+    {
+      path: "/trip-planner",
+      element: <TripPlanner/>
+    },
+    {
+      path: "/profile",
+      element: <Profile />
     }
 
 

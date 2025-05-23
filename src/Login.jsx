@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { useState } from "react";
+import Cookies from "js-cookie"; // Import js-cookie
 import Show from './assets/Eye/Show.png';
 import Hide from './assets/Eye/Hide.png';
 
@@ -27,6 +28,8 @@ function Login() {
             console.log("Parsed response:", data);
 
             if (data.success) {
+                // Set cookie with email upon successful login
+                Cookies.set("userEmail", email, { expires: 7 }); // Expires in 7 days
                 setErrorMessage("");
                 navigate("/home");
             } else {
@@ -37,6 +40,8 @@ function Login() {
             setErrorMessage("Something went wrong. Check the console for more info.");
         }
     };
+
+    
 
     return (
         <div className='min-w-full min-h-screen bg-cover bg-[url("./assets/LoginBg.png")] bg-no-repeat flex justify-center md:justify-end'>
