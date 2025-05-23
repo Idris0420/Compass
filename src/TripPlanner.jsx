@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import Cookies from 'js-cookie';
 import MapSelector from './MapSelector.jsx';
 import Logo from './assets/Logo.png';
 import Profile from './assets/Profile.png';
@@ -11,6 +12,20 @@ function TripPlanner() {
   const [country, setCountry] = useState('');
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [activities, setActivities] = useState([]);
+  const [infoTypes, setInfoTypes] = useState([]);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  // Check if user is logged in when component mounts
+  useEffect(() => {
+    const email = Cookies.get('userEmail');
+    console.log('Client-side userEmail cookie:', email); // Debug cookie on client
+    if (email) {
+      setIsLoggedIn(true);
+    } else {
+      setIsLoggedIn(false);
+    }
+  }, []);
 
   // Handle search and pin functionality using Nominatim API for geocoding
   const handleSearchAndPin = async () => {
@@ -38,7 +53,73 @@ function TripPlanner() {
       setPosition({ lat: parseFloat(lat), lng: parseFloat(lon) });
     } catch (err) {
       setError('Failed to fetch location. Please try again.');
-      console.error(err);
+      console.error('Search error:', err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Handle activity checkbox changes
+  const handleActivityChange = (activity) => {
+    setActivities((prev) =>
+      prev.includes(activity)
+        ? prev.filter((item) => item !== activity)
+        : [...prev, activity]
+    );
+  };
+
+  // Handle info type checkbox changes
+  const handleInfoTypeChange = (info) => {
+    setInfoTypes((prev) =>
+      prev.includes(info)
+        ? prev.filter((item) => item !== info)
+        : [...prev, info]
+    );
+  };
+
+  // Handle form submission
+  const handleSubmit = async () => {
+    if (!city || !country) {
+      alert('City and country are required.');
+      return;
+    }
+
+    if (!isLoggedIn) {
+      alert('Please log in to save your trip.');
+      return;
+    }
+
+    setIsLoading(true);
+    const requestBody = { city, country, activities, info_types: infoTypes };
+
+    try {
+      const response = await fetch('http://localhost/my-app-api/TripPlanner.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include', // Ensure cookies are sent in cross-origin requests
+        body: JSON.stringify(requestBody),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        alert('Trip saved successfully!');
+      } else {
+        console.error('Server response:', result);
+        alert(result.error || 'Failed to save trip. Please try again.');
+      }
+    } catch (err) {
+      console.error('Submission error:', {
+        message: err.message,
+        name: err.name,
+        stack: err.stack,
+        endpoint: 'http://localhost/my-app-api/TripPlanner.php',
+        requestBody,
+        timestamp: new Date().toISOString(),
+      });
+      alert(`Failed to save trip: ${err.message || 'Network error. Please check the server.'}`);
     } finally {
       setIsLoading(false);
     }
@@ -46,7 +127,7 @@ function TripPlanner() {
 
   return (
     <div
-      className="w-full min-h-screen flex flex-col relative" // Added position: relative
+      className="w-full min-h-screen flex flex-col relative"
       style={{ background: 'linear-gradient(to bottom, rgba(255, 204, 102, 0.17), rgba(255, 204, 102, 0.68))' }}
     >
       {/* Navigation Bar */}
@@ -62,6 +143,11 @@ function TripPlanner() {
             <h1>Trip Planner</h1>
             <h1>Destinations</h1>
             <h1>Travel Logs</h1>
+            {!isLoggedIn && (
+              <a href="/login" className="text-white">
+                Login
+              </a>
+            )}
             <img className="h-[70%]" src={Profile} alt="Profile Icon" loading="lazy" />
           </div>
         </div>
@@ -154,45 +240,90 @@ function TripPlanner() {
                   <div className="w-[32%] flex flex-col gap-2">
                     <h3 className="text-[15px]">Land Activities</h3>
                     <label className="flex items-center">
-                      <input type="checkbox" className="mr-2" defaultChecked />
+                      <input
+                        type="checkbox"
+                        className="mr-2"
+                        checked={activities.includes('Hiking')}
+                        onChange={() => handleActivityChange('Hiking')}
+                      />
                       Hiking
                     </label>
                     <label className="flex items-center">
-                      <input type="checkbox" className="mr-2" />
+                      <input
+                        type="checkbox"
+                        className="mr-2"
+                        checked={activities.includes('Mountain Biking')}
+                        onChange={() => handleActivityChange('Mountain Biking')}
+                      />
                       Mountain Biking
                     </label>
                     <label className="flex items-center">
-                      <input type="checkbox" className="mr-2" />
+                      <input
+                        type="checkbox"
+                        className="mr-2"
+                        checked={activities.includes('Camping')}
+                        onChange={() => handleActivityChange('Camping')}
+                      />
                       Camping
                     </label>
                   </div>
                   <div className="w-[32%] flex flex-col gap-2">
                     <h3 className="text-[15px]">Water Activities</h3>
                     <label className="flex items-center">
-                      <input type="checkbox" className="mr-2" />
+                      <input
+                        type="checkbox"
+                        className="mr-2"
+                        checked={activities.includes('Kayaking')}
+                        onChange={() => handleActivityChange('Kayaking')}
+                      />
                       Kayaking
                     </label>
                     <label className="flex items-center">
-                      <input type="checkbox" className="mr-2" />
+                      <input
+                        type="checkbox"
+                        className="mr-2"
+                        checked={activities.includes('Fishing')}
+                        onChange={() => handleActivityChange('Fishing')}
+                      />
                       Fishing
                     </label>
                     <label className="flex items-center">
-                      <input type="checkbox" className="mr-2" />
+                      <input
+                        type="checkbox"
+                        className="mr-2"
+                        checked={activities.includes('Surfing')}
+                        onChange={() => handleActivityChange('Surfing')}
+                      />
                       Surfing
                     </label>
                     <label className="flex items-center">
-                      <input type="checkbox" className="mr-2" />
+                      <input
+                        type="checkbox"
+                        className="mr-2"
+                        checked={activities.includes('Canoeing')}
+                        onChange={() => handleActivityChange('Canoeing')}
+                      />
                       Canoeing
                     </label>
                   </div>
                   <div className="w-[32%] flex flex-col gap-2">
                     <h3 className="text-[15px]">Winter Activities</h3>
                     <label className="flex items-center">
-                      <input type="checkbox" className="mr-2" />
+                      <input
+                        type="checkbox"
+                        className="mr-2"
+                        checked={activities.includes('Skiing')}
+                        onChange={() => handleActivityChange('Skiing')}
+                      />
                       Skiing
                     </label>
                     <label className="flex items-center">
-                      <input type="checkbox" className="mr-2" />
+                      <input
+                        type="checkbox"
+                        className="mr-2"
+                        checked={activities.includes('Snowboarding')}
+                        onChange={() => handleActivityChange('Snowboarding')}
+                      />
                       Snowboarding
                     </label>
                   </div>
@@ -208,43 +339,88 @@ function TripPlanner() {
                 <div className="flex flex-row mt-3 justify-between">
                   <div className="w-[32%] flex flex-col gap-2">
                     <label className="flex items-center">
-                      <input type="checkbox" className="mr-2" defaultChecked />
+                      <input
+                        type="checkbox"
+                        className="mr-2"
+                        checked={infoTypes.includes('Transportation')}
+                        onChange={() => handleInfoTypeChange('Transportation')}
+                      />
                       Transportation
                     </label>
                     <label className="flex items-center">
-                      <input type="checkbox" className="mr-2" defaultChecked />
+                      <input
+                        type="checkbox"
+                        className="mr-2"
+                        checked={infoTypes.includes('Health & Safety')}
+                        onChange={() => handleInfoTypeChange('Health & Safety')}
+                      />
                       Health & Safety
                     </label>
                     <label className="flex items-center">
-                      <input type="checkbox" className="mr-2" />
+                      <input
+                        type="checkbox"
+                        className="mr-2"
+                        checked={infoTypes.includes('Weather Information')}
+                        onChange={() => handleInfoTypeChange('Weather Information')}
+                      />
                       Weather Information
                     </label>
                   </div>
                   <div className="w-[32%] flex flex-col gap-2">
                     <label className="flex items-center">
-                      <input type="checkbox" className="mr-2" />
+                      <input
+                        type="checkbox"
+                        className="mr-2"
+                        checked={infoTypes.includes('Gear & Packing Recommendations')}
+                        onChange={() => handleInfoTypeChange('Gear & Packing Recommendations')}
+                      />
                       Gear & Packing Recommendations
                     </label>
                     <label className="flex items-center">
-                      <input type="checkbox" className="mr-2" />
+                      <input
+                        type="checkbox"
+                        className="mr-2"
+                        checked={infoTypes.includes('Political/Cultural Information')}
+                        onChange={() => handleInfoTypeChange('Political/Cultural Information')}
+                      />
                       Political/Cultural Information
                     </label>
                     <label className="flex items-center">
-                      <input type="checkbox" className="mr-2" />
+                      <input
+                        type="checkbox"
+                        className="mr-2"
+                        checked={infoTypes.includes('Activity-Specific Information')}
+                        onChange={() => handleInfoTypeChange('Activity-Specific Information')}
+                      />
                       Activity-Specific Information
                     </label>
                   </div>
                   <div className="w-[32%] flex flex-col gap-2">
                     <label className="flex items-center">
-                      <input type="checkbox" className="mr-2" />
+                      <input
+                        type="checkbox"
+                        className="mr-2"
+                        checked={infoTypes.includes('Accommodation Recommendations')}
+                        onChange={() => handleInfoTypeChange('Accommodation Recommendations')}
+                      />
                       Accommodation Recommendations
                     </label>
                     <label className="flex items-center">
-                      <input type="checkbox" className="mr-2" defaultChecked />
+                      <input
+                        type="checkbox"
+                        className="mr-2"
+                        checked={infoTypes.includes('Food & Dining')}
+                        onChange={() => handleInfoTypeChange('Food & Dining')}
+                      />
                       Food & Dining
                     </label>
                     <label className="flex items-center">
-                      <input type="checkbox" className="mr-2" defaultChecked />
+                      <input
+                        type="checkbox"
+                        className="mr-2"
+                        checked={infoTypes.includes('Shopping & Souvenirs')}
+                        onChange={() => handleInfoTypeChange('Shopping & Souvenirs')}
+                      />
                       Shopping & Souvenirs
                     </label>
                   </div>
@@ -257,20 +433,21 @@ function TripPlanner() {
                   <h1 className="font-bold text-2xl">Submit</h1>
                   <button
                     className="w-fit px-4 py-2 bg-[#8B4513] text-white rounded-md hover:bg-[#6B2E0F] mt-3"
-                    onClick={() => alert('Trip submitted!')} // Placeholder action
+                    onClick={handleSubmit}
+                    disabled={isLoading || !isLoggedIn}
                   >
-                    Submit
+                    {isLoading ? 'Submitting...' : 'Submit'}
                   </button>
                 </div>
               </div>
             </div>
           </div>
         </div>
-        <div className="w-full relative"> {/* Added position: relative */}
+        <div className="w-full relative">
           <img
             src={BGCompass}
             alt="Background Compass"
-            className="absolute bottom-0 right-0 w-[500px] h-auto z-[-1] " // Adjusted size, z-index, and opacity
+            className="absolute bottom-0 right-0 w-[500px] h-auto z-[-1]"
           />
           <div className="h-[40px] w-full bg-[#006699] font-outfit font-bold flex items-center justify-end px-[50px] text-white">
             © 2025 ITP222L Group 9 All Rights Reserved.
