@@ -29,7 +29,7 @@ function Profile(){
                     <div>
                     <table className="w-full h-5 mt-5">
                         <thead>
-                            <tr>
+                            <tr className="text-[#006699]">
                                 <th>No.</th>
                                 <th>Date</th>
                                 <th>Destination</th>
