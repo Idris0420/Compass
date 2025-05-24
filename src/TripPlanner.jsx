@@ -16,10 +16,36 @@ function TripPlanner() {
   const [activities, setActivities] = useState([]);
   const [infoTypes, setInfoTypes] = useState([]);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [profileImage, setProfileImage] = useState(null);
 
   useEffect(() => {
     const email = Cookies.get('userEmail');
     setIsLoggedIn(!!email);
+
+    if (email) {
+      const fetchProfileImage = async () => {
+        try {
+          const response = await fetch('http://localhost/my-app-api/GetUserProfile.php', {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-User-Email': email,
+            },
+          });
+
+          const result = await response.json();
+          if (result.success && result.profile_image) {
+            setProfileImage(result.profile_image);
+          } else {
+            console.error('Failed to fetch profile image:', result.error);
+          }
+        } catch (err) {
+          console.error('Failed to fetch profile image:', err);
+        }
+      };
+
+      fetchProfileImage();
+    }
   }, []);
 
   const handleSearchAndPin = async () => {
@@ -101,14 +127,31 @@ function TripPlanner() {
       <nav className="h-14 w-full bg-[#006699] fixed z-50 flex items-center px-6 justify-between">
         <div className="flex items-center h-full">
           <img src={Logo} className="h-4/5" alt="Compass Logo" loading="lazy" />
-          <h1 className="text-3xl ml-2 text-white font-brans">Compass</h1>
+          <h1 style={{ fontFamily: 'Brans' }} className="text-3xl ml-2 text-white">
+                            Compass
+          </h1>
         </div>
-        <div className="flex w-2/5 h-full justify-between items-center text-white text-xl font-brans">
-          <Link to="/trip-planner">Trip Planner</Link>
-          <h1>Destinations</h1>
-          <Link to="/travel-logs">Travel Logs</Link>
-          {!isLoggedIn && <a href="/login" className="text-white">Login</a>}
-          <img className="h-4/5" src={Profile} alt="Profile Icon" loading="lazy" />
+
+        <div className="flex w-[40%] h-full justify-between items-center font-brands text-white text-xl">
+
+          <Link to="/trip-planner" className="cursor-pointer hover:scale-125 transition-transform duration-300">
+            Trip Planner
+          </Link>
+          <Link className="cursor-pointer hover:scale-125 transition-transform duration-300">
+            Destinations
+          </Link>
+          <Link to="/travel-logs" className="cursor-pointer hover:scale-125 transition-transform duration-300">
+            Travel Logs
+          </Link>
+
+            <Link to="/profile" className="h-full flex items-center w-auto">
+              <img
+                className="h-12 w-12 rounded-full object-cover cursor-pointer hover:scale-150 transition-transform duration-300"
+                src={profileImage || Profile}
+                alt="Profile"
+                loading="lazy"
+              />
+            </Link> 
         </div>
       </nav>
 
