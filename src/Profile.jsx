@@ -74,7 +74,7 @@ function Profile() { // Keep the component name as Profile
     // Logout function
     const handleLogout = () => {
         Cookies.remove("userEmail");
-        navigate("/");
+        navigate("/login");
     };
 
     // Clear history function

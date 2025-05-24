@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import debounce from "lodash.debounce";
 import Cross from "./assets/Cross.png";
 import Check from "./assets/Check.png";
 
@@ -11,8 +12,10 @@ function ForgotPass() {
   const [securityAnswer, setSecurityAnswer] = useState("");
   const [securityAnswerInput, setSecurityAnswerInput] = useState("");
   const [step, setStep] = useState(1);
+  const [emailError, setEmailError] = useState("");
+  const [securityAnswerError, setSecurityAnswerError] = useState("");
+  const [isEmailValid, setIsEmailValid] = useState(false);
 
-  const [reset_clicked, setResetClicked] = useState(false);
   const [has_min_length, setHasMinLength] = useState(null);
   const [has_uppercase, setHasUppercase] = useState(null);
   const [has_lowercase, setHasLowercase] = useState(null);
@@ -26,6 +29,63 @@ function ForgotPass() {
   const passwordInputRef = useRef(null);
   const confirmPasswordInputRef = useRef(null);
 
+  // Email format validation (only @gmail.com)
+  const validateEmail = (email) => {
+    const emailRegex = /^[a-zA-Z0-9._-]+@gmail\.com$/;
+    return emailRegex.test(email);
+  };
+
+  // Check if email exists using get_security_question.php
+  const checkEmailExists = async (email) => {
+    try {
+      const res = await fetch("http://localhost/my-app-api/get_security_question.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await res.json();
+
+      if (data.security_question) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (err) {
+      console.error(err);
+      setEmailError("Something went wrong. Please try again.");
+      return false;
+    }
+  };
+
+  // Debounced email validation and existence check
+  const debouncedValidateEmail = debounce(async (email) => {
+    if (!validateEmail(email)) {
+      setEmailError("Please enter a valid Gmail address (e.g., user@gmail.com).");
+      setIsEmailValid(false);
+      return;
+    }
+    setEmailError("");
+    const exists = await checkEmailExists(email);
+    if (exists) {
+      setIsEmailValid(true);
+    } else {
+      setEmailError("No account with that email exists.");
+      setIsEmailValid(false);
+    }
+  }, 500);
+
+  // Trigger email validation on input change
+  useEffect(() => {
+    if (email) {
+      debouncedValidateEmail(email);
+    } else {
+      setEmailError("");
+      setIsEmailValid(false);
+    }
+    return () => debouncedValidateEmail.cancel();
+  }, [email]);
+
   const verifyPassword = (pwd) => {
     if (typeof pwd !== "string") pwd = "";
     setHasUppercase(/[A-Z]/.test(pwd));
@@ -36,6 +96,12 @@ function ForgotPass() {
   };
 
   const handleCheckEmail = async () => {
+    if (!validateEmail(email)) {
+      setEmailError("Please enter a valid Gmail address (e.g., user@gmail.com).");
+      setIsEmailValid(false);
+      return;
+    }
+    setEmailError("");
     try {
       const res = await fetch("http://localhost/my-app-api/get_security_question.php", {
         method: "POST",
@@ -50,27 +116,26 @@ function ForgotPass() {
         setSecurityAnswer(data.security_answer);
         setStep(2);
       } else {
-        alert(data.error || "Email not found.");
+        setEmailError(data.error || "Email not found.");
+        setIsEmailValid(false);
       }
     } catch (err) {
       console.error(err);
-      alert("Something went wrong. Please try again.");
+      setEmailError("Something went wrong. Please try again.");
     }
   };
 
   const handleVerifyAnswer = () => {
     if (securityAnswer.toLowerCase() === securityAnswerInput.toLowerCase()) {
+      setSecurityAnswerError("");
       setStep(3);
     } else {
-      alert("Incorrect answer. Please try again.");
+      setSecurityAnswerError("Incorrect answer. Please try again.");
     }
   };
 
   const handleChangePassword = async () => {
-    setResetClicked(true);
     verifyPassword(newPassword);
-
-    await new Promise((resolve) => setTimeout(resolve, 100));
 
     if (newPassword !== confirmPassword) {
       alert("Passwords do not match.");
@@ -100,7 +165,7 @@ function ForgotPass() {
         if (data.success) {
           alert("Changed Successfully");
           setTimeout(() => {
-            navigate("/");
+            navigate("/login");
           }, 2000);
         } else {
           alert(data.error || "Failed to update password.");
@@ -112,7 +177,6 @@ function ForgotPass() {
     }
   };
 
-  // NEW: Updated handleKeyDown to handle actions on Enter without immediate focus
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
       if (step === 1) {
@@ -129,7 +193,6 @@ function ForgotPass() {
     }
   };
 
-  // NEW: Added useEffect to focus the next input after step changes
   useEffect(() => {
     if (step === 2) {
       securityAnswerInputRef.current?.focus();
@@ -138,11 +201,10 @@ function ForgotPass() {
     }
   }, [step]);
 
+  // Update password checklist as the user types
   useEffect(() => {
-    if (reset_clicked) {
-      verifyPassword(newPassword);
-    }
-  }, [reset_clicked, newPassword]);
+    verifyPassword(newPassword);
+  }, [newPassword]);
 
   return (
     <div className="min-w-full min-h-screen bg-cover bg-[url('./assets/LoginBg.png')] bg-no-repeat flex justify-center md:justify-end">
@@ -165,10 +227,14 @@ function ForgotPass() {
               <button
                 onClick={handleCheckEmail}
                 className="font-outfit bg-[#FFCC66] px-[20px] h-[40px] mx-auto font-bold shadow-lg hover:bg-white transition-colors duration-300 mb-[2%]"
+                disabled={!isEmailValid}
               >
                 Confirm
               </button>
             </div>
+            {emailError && (
+              <p className="text-red-500 font-outfit text-base mt-0 text-left">{emailError}</p>
+            )}
           </div>
 
           {/* Security Question */}
@@ -191,6 +257,9 @@ function ForgotPass() {
                 Confirm
               </button>
             </div>
+            {securityAnswerError && (
+              <p className="text-red-500 font-outfit text-base mt-0 text-left">{securityAnswerError}</p>
+            )}
           </div>
 
           {/* New Password */}
@@ -216,24 +285,24 @@ function ForgotPass() {
               className={`w-full h-[40px] bg-white border border-gray-500 px-2 focus:border-[#FFCC66] focus:ring-1 focus:ring-[#FFCC66] outline-none shadow-lg ${step <= 2 ? "invisible" : "block"}`}
             />
             <ul className={`list-none text-sm space-y-1 ${step <= 2 ? "invisible" : "block"}`}>
-              <li className={`font-outfit flex items-center gap-2 ${reset_clicked ? (has_uppercase ? "text-green-400" : "text-red-400") : "text-white"}`}>
-                <img src={has_uppercase ? Check : Cross} className={`w-[20px] ${!reset_clicked ? "invisible" : ""}`} alt="" />
+              <li className={`font-outfit flex items-center gap-2 ${has_uppercase !== null ? (has_uppercase ? "text-green-400" : "text-red-400") : "text-white"}`}>
+                <img src={has_uppercase ? Check : Cross} className={`w-[20px] ${has_uppercase === null ? "invisible" : ""}`} alt="" />
                 At least one uppercase letter
               </li>
-              <li className={`font-outfit flex items-center gap-2 ${reset_clicked ? (has_lowercase ? "text-green-400" : "text-red-400") : "text-white"}`}>
-                <img src={has_lowercase ? Check : Cross} className={`w-[20px] ${!reset_clicked ? "invisible" : ""}`} alt="" />
+              <li className={`font-outfit flex items-center gap-2 ${has_lowercase !== null ? (has_lowercase ? "text-green-400" : "text-red-400") : "text-white"}`}>
+                <img src={has_lowercase ? Check : Cross} className={`w-[20px] ${has_lowercase === null ? "invisible" : ""}`} alt="" />
                 At least one lowercase letter
               </li>
-              <li className={`font-outfit flex items-center gap-2 ${reset_clicked ? (has_number ? "text-green-400" : "text-red-400") : "text-white"}`}>
-                <img src={has_number ? Check : Cross} className={`w-[20px] ${!reset_clicked ? "invisible" : ""}`} alt="" />
+              <li className={`font-outfit flex items-center gap-2 ${has_number !== null ? (has_number ? "text-green-400" : "text-red-400") : "text-white"}`}>
+                <img src={has_number ? Check : Cross} className={`w-[20px] ${has_number === null ? "invisible" : ""}`} alt="" />
                 At least one number
               </li>
-              <li className={`font-outfit flex items-center gap-2 ${reset_clicked ? (has_special_char ? "text-green-400" : "text-red-400") : "text-white"}`}>
-                <img src={has_special_char ? Check : Cross} className={`w-[20px] ${!reset_clicked ? "invisible" : ""}`} alt="" />
+              <li className={`font-outfit flex items-center gap-2 ${has_special_char !== null ? (has_special_char ? "text-green-400" : "text-red-400") : "text-white"}`}>
+                <img src={has_special_char ? Check : Cross} className={`w-[20px] ${has_special_char === null ? "invisible" : ""}`} alt="" />
                 At least one special character
               </li>
-              <li className={`font-outfit flex items-center gap-2 ${reset_clicked ? (has_min_length ? "text-green-400" : "text-red-400") : "text-white"}`}>
-                <img src={has_min_length ? Check : Cross} className={`w-[20px] ${!reset_clicked ? "invisible" : ""}`} alt="" />
+              <li className={`font-outfit flex items-center gap-2 ${has_min_length !== null ? (has_min_length ? "text-green-400" : "text-red-400") : "text-white"}`}>
+                <img src={has_min_length ? Check : Cross} className={`w-[20px] ${has_min_length === null ? "invisible" : ""}`} alt="" />
                 At least 8 characters
               </li>
             </ul>
